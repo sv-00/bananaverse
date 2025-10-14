@@ -4,6 +4,10 @@ A geo-tasking application for tracking banana delivery locations with real-time 
 
 ![Banana Laundering Map](https://img.shields.io/badge/Banana-Laundering-yellow) ![Next.js](https://img.shields.io/badge/Next.js-15-black) ![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)
 
+## 🎬 Demo
+
+![App Demo](./public/demo.gif)
+
 ## 🌟 Features
 
 - **Interactive Google Maps** with custom markers
