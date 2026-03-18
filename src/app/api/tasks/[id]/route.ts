@@ -16,18 +16,19 @@ interface TaskDocument extends Document {
 
 export async function PUT(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const updates = await request.json();
         const { db } = await connectToDatabase();
 
-        if (!ObjectId.isValid(params.id)) {
+        if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: 'Invalid task ID' }, { status: 400 });
         }
 
         const result = await db.collection('tasks').updateOne(
-            { _id: new ObjectId(params.id) },
+            { _id: new ObjectId(id) },
             { $set: updates }
         );
 
@@ -35,7 +36,7 @@ export async function PUT(
             return NextResponse.json({ error: 'Task not found' }, { status: 404 });
         }
 
-        const task = await db.collection<TaskDocument>('tasks').findOne({ _id: new ObjectId(params.id) });
+        const task = await db.collection<TaskDocument>('tasks').findOne({ _id: new ObjectId(id) });
 
         if (!task) {
             return NextResponse.json({ error: 'Task not found' }, { status: 404 });
@@ -64,16 +65,17 @@ export async function PUT(
 
 export async function DELETE(
     request: NextRequest,
-    { params }: { params: { id: string } }
+    { params }: { params: Promise<{ id: string }> }
 ) {
     try {
+        const { id } = await params;
         const { db } = await connectToDatabase();
 
-        if (!ObjectId.isValid(params.id)) {
+        if (!ObjectId.isValid(id)) {
             return NextResponse.json({ error: 'Invalid task ID' }, { status: 400 });
         }
 
-        const result = await db.collection('tasks').deleteOne({ _id: new ObjectId(params.id) });
+        const result = await db.collection('tasks').deleteOne({ _id: new ObjectId(id) });
 
         if (result.deletedCount === 0) {
             return NextResponse.json({ error: 'Task not found' }, { status: 404 });
