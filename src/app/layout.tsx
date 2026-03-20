@@ -8,8 +8,19 @@ const geistSans = Geist({
 });
 
 export const metadata: Metadata = {
-  title: "Bananaverse",
-  description: "Geo location marker for Drop locations",
+  title: {
+    default: "Bananaverse — Logistics Intelligence Platform",
+    template: "%s | Bananaverse",
+  },
+  description:
+    "Real-time fleet tracking, AI-optimized routing, and end-to-end shipment management. Deliver smarter with Bananaverse.",
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_BASE_URL || "https://bananaverse.app"
+  ),
+  icons: {
+    icon: [{ url: "/favicon.svg?v=5", type: "image/svg+xml" }],
+    apple: "/favicon.svg?v=5",
+  },
 };
 
 export default function RootLayout({

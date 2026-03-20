@@ -14,8 +14,9 @@ export interface TokenPayload {
 const JWT_SECRET = process.env.JWT_SECRET;
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET;
 
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1h";
-const JWT_REFRESH_EXPIRES_IN = process.env.JWT_REFRESH_EXPIRES_IN || "7d";
+// Not secrets — just configuration constants. No need for env vars.
+const JWT_EXPIRES_IN = "1h";
+const JWT_REFRESH_EXPIRES_IN = "7d";
 
 if (!JWT_SECRET || !JWT_REFRESH_SECRET) {
   if (process.env.NODE_ENV === "production") {
@@ -43,7 +44,7 @@ export function generateAccessToken(user: {
     tokenType: "access",
   };
   return jwt.sign(payload, EFFECTIVE_JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN as jwt.SignOptions["expiresIn"],
+    expiresIn: JWT_EXPIRES_IN,
     algorithm: "HS256",
   });
 }
@@ -57,7 +58,7 @@ export function generateRefreshToken(user: { id: string }): string {
     tokenType: "refresh",
   };
   return jwt.sign(payload, EFFECTIVE_REFRESH_SECRET, {
-    expiresIn: JWT_REFRESH_EXPIRES_IN as jwt.SignOptions["expiresIn"],
+    expiresIn: JWT_REFRESH_EXPIRES_IN,
     algorithm: "HS256",
   });
 }
