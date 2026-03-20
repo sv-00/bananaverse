@@ -45,9 +45,21 @@ export function useGoogleMaps() {
             script.onload = () => {
                 setStatus('Google Maps script loaded, waiting for API...');
 
+                // Listen for auth errors (invalid key)
+                const origError = console.error;
+                const authErrorHandler = (...args: any[]) => {
+                    const msg = args.join(' ');
+                    if (msg.includes('InvalidKeyMapError') || msg.includes('ApiNotActivatedMapError')) {
+                        setStatus('❌ Invalid Google Maps API key — check your NEXT_PUBLIC_GOOGLE_MAPS_API_KEY in .env');
+                    }
+                    origError.apply(console, args);
+                };
+                console.error = authErrorHandler;
+
                 const checkApi = setInterval(() => {
                     if (window.google?.maps?.Map) {
                         clearInterval(checkApi);
+                        console.error = origError;
                         setStatus('Google Maps API fully ready');
                         resolve();
                     }
@@ -55,6 +67,7 @@ export function useGoogleMaps() {
 
                 setTimeout(() => {
                     clearInterval(checkApi);
+                    console.error = origError;
                     if (!window.google?.maps?.Map) {
                         reject(new Error('Google Maps API initialization timeout'));
                     }

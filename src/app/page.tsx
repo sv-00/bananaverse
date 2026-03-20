@@ -102,8 +102,9 @@ export default function BananaLaunderingMap() {
     }
 
     try {
-      const userLocation = await getCurrentLocation();
-      const map = initMap(userLocation);
+      // Always center map on Kerala — geolocation via tunnel/VPN gives wrong coords
+      const defaultCenter = { lat: 9.9312, lng: 76.2673 }; // Kochi, Kerala
+      const map = initMap(defaultCenter);
 
       if (map) {
         console.log('🗺️ Map initialized, setting up...');
@@ -122,21 +123,8 @@ export default function BananaLaunderingMap() {
         setStatus(`✅ Map loaded successfully ${useFallbackMarkers ? '(using fallback markers)' : ''}`);
       }
     } catch (error) {
-      console.warn('Using default location:', error);
-      const map = initMap({ lat: 12.3325, lng: 75.0962 });
-
-      if (map) {
-        console.log('🗺️ Default map initialized');
-        setupMapListeners(map);
-        const loadedTasks = await loadTasks();
-        console.log('📋 Tasks loaded for default map:', loadedTasks.length);
-
-        if (loadedTasks.length > 0) {
-          addTaskMarkers(loadedTasks, map);
-        }
-
-        setStatus(`✅ Map loaded with default location ${useFallbackMarkers ? '(using fallback markers)' : ''}`);
-      }
+      console.warn('Map init failed:', error);
+      setStatus('❌ Failed to initialize map');
     }
   }, [isGoogleLoaded, getCurrentLocation, initMap, watchLocation, loadTasks, addTaskMarkers, setupMapListeners, useFallbackMarkers]);
 

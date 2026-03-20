@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  allowedDevOrigins: ["bananaverse-v.dopolabs.com"],
 };
 
 export default nextConfig;

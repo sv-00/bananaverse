@@ -37,6 +37,7 @@ export function useGeolocation() {
                 return;
             }
 
+            // Try high accuracy first, fall back to low accuracy on timeout
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const location = {
@@ -46,10 +47,30 @@ export function useGeolocation() {
                     setUserLocation(location);
                     resolve(location);
                 },
-                (error) => {
-                    const errorMessage = getGeolocationError(error);
-                    setLocationError(errorMessage);
-                    reject(new Error(errorMessage));
+                (highAccError) => {
+                    if (highAccError.code === highAccError.TIMEOUT) {
+                        // Retry without high accuracy — much faster on desktop/wifi
+                        navigator.geolocation.getCurrentPosition(
+                            (position) => {
+                                const location = {
+                                    lat: position.coords.latitude,
+                                    lng: position.coords.longitude
+                                };
+                                setUserLocation(location);
+                                resolve(location);
+                            },
+                            (lowAccError) => {
+                                const errorMessage = getGeolocationError(lowAccError);
+                                setLocationError(errorMessage);
+                                reject(new Error(errorMessage));
+                            },
+                            { enableHighAccuracy: false, timeout: 10000, maximumAge: 300000 }
+                        );
+                    } else {
+                        const errorMessage = getGeolocationError(highAccError);
+                        setLocationError(errorMessage);
+                        reject(new Error(errorMessage));
+                    }
                 },
                 { enableHighAccuracy: true, timeout: 5000, maximumAge: 0 }
             );
