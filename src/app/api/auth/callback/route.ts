@@ -2,7 +2,7 @@ import { type NextRequest, NextResponse } from "next/server";
 import { generateTokenPair } from "@/lib/auth/jwt";
 import { setAuthCookies } from "@/lib/auth/cookies";
 import { isAdminEmail } from "@/lib/auth";
-import { validateOAuthState } from "../sign-in/route";
+import { validateOAuthState } from "@/lib/auth/oauth-state";
 import { connectToDatabase } from "@/lib/mongodb";
 
 const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
