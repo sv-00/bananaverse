@@ -1,12 +1,6 @@
 // src/lib/mongodb.ts
 import { MongoClient } from 'mongodb';
 
-const MONGODB_URI = process.env.DATABASE_URL!;
-
-if (!MONGODB_URI) {
-    throw new Error('Please define MONGODB_URI environment variable');
-}
-
 let cachedClient: MongoClient | null = null;
 
 export async function connectToDatabase() {
@@ -14,7 +8,12 @@ export async function connectToDatabase() {
         return { client: cachedClient, db: cachedClient.db() };
     }
 
-    const client = await MongoClient.connect(MONGODB_URI);
+    const uri = process.env.DATABASE_URL;
+    if (!uri) {
+        throw new Error('Please define DATABASE_URL environment variable');
+    }
+
+    const client = await MongoClient.connect(uri);
     cachedClient = client;
 
     return { client, db: client.db() };
