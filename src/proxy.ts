@@ -1,24 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-const PUBLIC_PATHS = ["/login", "/api/auth", "/tracking"]; // tracking is public for customers
-
-export function proxy(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-
-  if (PUBLIC_PATHS.some((p) => pathname.startsWith(p))) {
-    return NextResponse.next();
-  }
-
-  const accessToken = request.cookies.get("bananaverse_access_token")?.value;
-  const refreshToken = request.cookies.get("bananaverse_refresh_token")?.value;
-
-  if (!accessToken && !refreshToken) {
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
+// Auth disabled — site is fully public for now
+export function proxy(_request: NextRequest) {
   return NextResponse.next();
 }
 
